@@ -1,0 +1,7 @@
+spring:
+  security:
+    yiban:
+      enabled: true
+      authc:        app-key: xx
+        app-secret: xxx
+        callback: xxxxxxx 
