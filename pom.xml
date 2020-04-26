@@ -3,18 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.5.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	
-	<artifactId>security-sudytech-spring-boot-starter</artifactId>
-	<description>Spring Boot Starter For Spring Security With IDS SDK（南京苏迪） </description>
+	<groupId>com.github.hiwepy</groupId>
+	<artifactId>pac4j-sudytech</artifactId>
+	<description>Pac4j For Sudytech</description>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>${project.groupId}:${project.artifactId}</name>
-	<url>https://github.com/hiwepy/${project.artifactId}</url>
+   	<url>https://github.com/hiwepy/${project.artifactId}</url>
 	<packaging>jar</packaging>
 
 	<licenses>
@@ -71,6 +65,12 @@
 						<maxmem>512M</maxmem>
 					</configuration>
 				</plugin>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-deploy-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>${maven-deploy-plugin.version}</version>
+				</plugin>
 				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -116,6 +116,12 @@
 							</goals>
 						</execution>
 					</executions>
+				</plugin>
+				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-install-plugin -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>${maven-install-plugin.version}</version>
 				</plugin>
 				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-resources-plugin -->
 				<plugin>
@@ -362,57 +368,74 @@
 	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<commons-httpclient.version>3.1</commons-httpclient.version>
-		<commons-net.version>3.6</commons-net.version>
-		<commons-not-yet-ssl.version>0.3.9</commons-not-yet-ssl.version>
+		<java.version>1.8</java.version>
 		<maven.version>3.0</maven.version>
+        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>3.0.1</maven-dependency-plugin.version>
+        <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
+        <maven-enforcer-plugin.version>3.0.0-M1</maven-enforcer-plugin.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-surefire-plugin.vertsion>2.22.1</maven-surefire-plugin.vertsion>
+        <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
+        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
+		<lombok.version>1.18.12</lombok.version>
+		<pac4j.version>4.0.0</pac4j.version>
 		<sudytech-sdk.version>4.0.6.9</sudytech-sdk.version>
-		<security-biz-spring-boot-starter.version>1.0.0-SNAPSHOT</security-biz-spring-boot-starter.version>
-	</properties> 
+		<servlet-api.version>4.0.1</servlet-api.version>
+	</properties>
 	
 	<dependencyManagement>
 		<dependencies>
-			<!-- https://github.com/hiwepy/security-biz-spring-boot-starter -->
+			
+			<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 			<dependency>
-				<groupId>com.github.hiwepy</groupId>
-				<artifactId>security-biz-spring-boot-starter</artifactId>
-				<version>${security-biz-spring-boot-starter.version}</version>
+			    <groupId>org.projectlombok</groupId>
+			    <artifactId>lombok</artifactId>
+			    <version>${lombok.version}</version>
 			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/org.pac4j -->
+			<dependency>
+	            <groupId>org.pac4j</groupId>
+	            <artifactId>pac4j-core</artifactId>
+	            <version>${pac4j.version}</version>
+	        </dependency>
+	        <dependency>
+			    <groupId>org.pac4j</groupId>
+			    <artifactId>pac4j-config</artifactId>
+			    <version>${pac4j.version}</version>
+			</dependency>
+			<!-- PAC4J For HTTP Protocol  -->
+	        <dependency>
+	            <groupId>org.pac4j</groupId>
+	            <artifactId>pac4j-http</artifactId>
+	            <version>${pac4j.version}</version>
+	        </dependency>
+	        
 			<dependency>
 			  	<groupId>com.sudytech</groupId>
 			  	<artifactId>sudytech-mids-mobile-api</artifactId>
 			  	<version>${sudytech-sdk.version}</version>
 			</dependency>
-			<!-- https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
+			
 			<dependency>
-				<groupId>commons-httpclient</groupId>
-				<artifactId>commons-httpclient</artifactId>
-				<version>${commons-httpclient.version}</version>
-			</dependency>
-			<!-- https://mvnrepository.com/artifact/org.apache.commons/not-yet-commons-ssl -->
-			<!-- 
-				Not-Yet-Commons-SSL是Apache许可证下的一款Java类库，它提供易于使用的API，并支持各种各样的证书格式和配置选项，来达到简化SSL的使用的目的。
-				尤其是，它允许在单个JVM中使用多个证书，优雅地处理自签名证书，以及支持所有标准的证书格式，从而解决了一些长期以来一直存在的Java内建的SSL支持问题。
-				详情参见：http://www.infoq.com/cn/news/2007/06/not-yet-commons-ssl
-			 -->
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>not-yet-commons-ssl</artifactId>
-				<version>${commons-not-yet-ssl.version}</version>
-			</dependency>
+		        <groupId>javax.servlet</groupId>
+		        <artifactId>javax.servlet-api</artifactId>
+		        <version>${servlet-api.version}</version>
+		    </dependency>
+			 
 		</dependencies>
 	</dependencyManagement>
 	
 	<dependencies>
-		
-		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+	 	
+	 	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
 		    <artifactId>lombok</artifactId>
@@ -426,60 +449,22 @@
 			<optional>true</optional>
 		</dependency>
 		
+		<!-- https://mvnrepository.com/artifact/org.pac4j -->
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-core</artifactId>
+        </dependency>
+        <dependency>
+		    <groupId>org.pac4j</groupId>
+		    <artifactId>pac4j-config</artifactId>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-simple</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
-		<!-- Core starter, including auto-configuration support, logging and YAML -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- Spring Boot Test 依赖 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<!-- @ConfigurationProperties annotation processing (metadata for IDEs) -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
-
-		<!-- Compile dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-autoconfigure</artifactId>
-		</dependency>
-		
-		<!-- Commons项目中用来处理Java基本对象方法的工具类包， 可以简化很多平时经常要用到的写法， 例如判断字符串是否为空等等 -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-	 
-		<!-- https://github.com/hiwepy/security-biz-spring-boot-starter -->
-		<dependency>
-			<groupId>com.github.hiwepy</groupId>
-			<artifactId>security-biz-spring-boot-starter</artifactId>
-		</dependency>
-		                          
-		<dependency>
+		<!-- PAC4J For HTTP Protocol  -->
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-http</artifactId>
+        </dependency>
+        
+	 	<dependency>
 		  	<groupId>com.sudytech</groupId>
 		  	<artifactId>sudytech-mids-mobile-api</artifactId>
 		</dependency>

@@ -1,4 +1,4 @@
-package org.pac4j.core.ext;
+package org.pac4j.ext.sudytech;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
