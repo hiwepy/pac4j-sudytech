@@ -13,25 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.pac4j.ext.sudytech.profile.creator;
-
-import java.util.Optional;
+package org.pac4j.ext.sudytech.credentials;
 
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.profile.creator.ProfileCreator;
-import org.pac4j.ext.sudytech.credentials.SudytechWxCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.profile.definition.ProfileDefinitionAware;
 import org.pac4j.ext.sudytech.profile.SudytechWxProfile;
+import org.pac4j.ext.sudytech.profile.SudytechWxProfileDefinition;
 
 /**
- * Sudytech Wx profile creator.
- * @author 		： <a href="https://github.com/hiwepy">wandl</a>
+ * TODO
+ * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
  */
-public class SudytechWxProfileCreator implements ProfileCreator<SudytechWxCredentials> {
-    
-    @Override
-    public Optional<UserProfile> create(final SudytechWxCredentials credentials, final WebContext context) {
-        return Optional.ofNullable(new SudytechWxProfile(credentials.getUname(), credentials.getOpenid()));
-    }
-	
+public class SudytechWxAuthenticator extends ProfileDefinitionAware<SudytechWxProfile> implements Authenticator<SudytechWxCredentials> {
+
+	@Override
+	protected void internalInit() {
+		defaultProfileDefinition(new SudytechWxProfileDefinition(x -> new SudytechWxProfile(null, null)));
+	}
+
+	@Override
+	public void validate(SudytechWxCredentials credentials, WebContext context) {
+
+	}
+
 }

@@ -18,6 +18,9 @@ package org.pac4j.ext.sudytech.credentials.extractor;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.pac4j.core.context.ContextHelper;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
@@ -28,62 +31,61 @@ import org.pac4j.ext.sudytech.credentials.SudytechWxCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sudytech.auth.basic.ids.login.spi.AppStoreLoginNameResolver;
-import com.sudytech.auth.basic.ids.login.spi.MidsLoginNameResolver;
-
 public class SudytechWxParameterExtractor implements CredentialsExtractor<SudytechWxCredentials> {
 
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	
-    private boolean supportGetRequest = true;
-    private boolean supportPostRequest;
-    private String charset = StandardCharsets.UTF_8.name();
-    
+
+	private boolean supportGetRequest = true;
+	private boolean supportPostRequest;
+	private String charset = StandardCharsets.UTF_8.name();
+
 	public SudytechWxParameterExtractor() {
 		this(false, true, StandardCharsets.UTF_8.name());
 	}
-	
+
 	public SudytechWxParameterExtractor(String charset) {
 		this(false, true, charset);
 	}
-	
-	public SudytechWxParameterExtractor(boolean supportGetRequest,
-			boolean supportPostRequest, String charset) {
-        this.supportGetRequest = supportGetRequest;
-        this.supportPostRequest = supportPostRequest;
-        this.charset = charset;
+
+	public SudytechWxParameterExtractor(boolean supportGetRequest, boolean supportPostRequest, String charset) {
+		this.supportGetRequest = supportGetRequest;
+		this.supportPostRequest = supportPostRequest;
+		this.charset = charset;
 	}
-	
+
 	@Override
-    public Optional<SudytechWxCredentials> extract(WebContext context) {
-		
+	public Optional<SudytechWxCredentials> extract(WebContext context) {
+
 		logger.debug("supportGetRequest: {}", this.supportGetRequest);
 		logger.debug("supportPostRequest: {}", this.supportPostRequest);
-		
-        if (ContextHelper.isGet(context) && ! supportGetRequest) {
-            throw new CredentialsException("GET requests not supported");
-        } else if (ContextHelper.isPost(context) && !supportPostRequest) {
-            throw new CredentialsException("POST requests not supported");
-        }
-        
-        JEEContext jeeContext = (JEEContext) context;
-        
-        MidsLoginNameResolver resolver = new AppStoreLoginNameResolver(jeeContext.getNativeRequest());
-        String loignName = resolver.findLoginNameByCache();
-        String wxOpenId = resolver.findWxOpenIdByCache();
-        
-        logger.debug("loignName : {}", loignName);
-    	logger.debug("wxOpenId : {}", wxOpenId);
-    	
-    	return Optional.of(new SudytechWxCredentials(loignName, wxOpenId));
-    }
-	
+
+		if (ContextHelper.isGet(context) && !supportGetRequest) {
+			throw new CredentialsException("GET requests not supported");
+		} else if (ContextHelper.isPost(context) && !supportPostRequest) {
+			throw new CredentialsException("POST requests not supported");
+		}
+
+		JEEContext jeeContext = (JEEContext) context;
+
+		HttpServletRequest _request = jeeContext.getNativeRequest();
+		HttpSession httpSess = _request.getSession();
+		String loginName = (String) httpSess.getAttribute("mids_loginName");
+
+		String openid = _request.getParameter("mids.openid");
+
+		logger.debug("loignName : {}", loginName);
+		logger.debug("wxOpenId : {}", openid);
+
+		return Optional.of(new SudytechWxCredentials(loginName, openid));
+
+	}
+
 	@Override
-    public String toString() {
-        return CommonHelper.toNiceString(this.getClass(), 
-        		 "supportGetRequest", supportGetRequest, "supportPostRequest", supportPostRequest, "charset", charset);
-    }
-	
+	public String toString() {
+		return CommonHelper.toNiceString(this.getClass(), "supportGetRequest", supportGetRequest, "supportPostRequest",
+				supportPostRequest, "charset", charset);
+	}
+
 	public boolean isSupportGetRequest() {
 		return supportGetRequest;
 	}

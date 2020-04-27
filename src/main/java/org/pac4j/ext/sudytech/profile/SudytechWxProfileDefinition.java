@@ -22,7 +22,7 @@ import org.pac4j.core.profile.factory.ProfileFactory;
 /**
  * Sudytech Wx profile definition.
  */
-public abstract class SudytechWxProfileDefinition extends CommonProfileDefinition<SudytechWxProfile> {
+public class SudytechWxProfileDefinition extends CommonProfileDefinition<SudytechWxProfile> {
 
     public SudytechWxProfileDefinition() {
         super();

@@ -24,18 +24,19 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.DirectClient;
 import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.exception.http.RedirectionActionHelper;
 import org.pac4j.core.util.CommonHelper;
+import org.pac4j.ext.sudytech.credentials.SudytechWxAuthenticator;
 import org.pac4j.ext.sudytech.credentials.SudytechWxCredentials;
 import org.pac4j.ext.sudytech.credentials.extractor.SudytechWxParameterExtractor;
 import org.pac4j.ext.sudytech.profile.creator.SudytechWxProfileCreator;
 
 import com.sudytech.auth.basic.BasicEnv;
-import com.sudytech.auth.basic.booklist.util.StringUtils;
 import com.sudytech.auth.basic.ids.login.spi.AppStoreLoginNameResolver;
 
 public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
@@ -61,13 +62,13 @@ public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
 
 	@Override
 	protected void clientInit() {
+		defaultAuthenticator(new SudytechWxAuthenticator());
 		defaultProfileCreator(new SudytechWxProfileCreator());
 		defaultCredentialsExtractor(new SudytechWxParameterExtractor( this.isSupportGetRequest(), this.isSupportPostRequest(), this.getCharset()));
 		// ensures components have been properly initialized
 		CommonHelper.assertNotNull("credentialsExtractor", getCredentialsExtractor());
 		CommonHelper.assertNotNull("authenticator", getAuthenticator());
 		CommonHelper.assertNotNull("profileCreator", getProfileCreator());
-
 		try {
 			loadPublicPathMap(this.getPublicPaths());
 		} catch (Exception ex) {
@@ -109,7 +110,7 @@ public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
 					httpSess.setAttribute(this.dlmSessionKey, loginName);
 				}
 				httpSess.setAttribute("mids_loginName", loginName);
-				final Optional<SudytechWxCredentials> credentials = super.retrieveCredentials(context);
+				final Optional<SudytechWxCredentials> credentials = getCredentialsExtractor().extract(context);
 				if (!credentials.isPresent()) {
 					// redirect to the login page
 					logger.debug("redirectionUrl: {}", getLoginUrl());
@@ -124,7 +125,7 @@ public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
 						logger.debug("redirectionUrl: {}", redirectUrl);
 						throw RedirectionActionHelper.buildRedirectUrlAction(context, redirectUrl);
 					} else {
-						final Optional<SudytechWxCredentials> credentials = super.retrieveCredentials(context);
+						final Optional<SudytechWxCredentials> credentials = getCredentialsExtractor().extract(context);
 						if (!credentials.isPresent()) {
 							// redirect to the login page
 							logger.debug("redirectionUrl: {}", getLoginUrl());
@@ -133,7 +134,7 @@ public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
 						return credentials;
 					}
 				} else if (isWeChat(request)) {
-					final Optional<SudytechWxCredentials> credentials = super.retrieveCredentials(context);
+					final Optional<SudytechWxCredentials> credentials = getCredentialsExtractor().extract(context);
 					if (!credentials.isPresent()) {
 						// redirect to the login page
 						logger.debug("redirectionUrl: {}", getLoginUrl());
@@ -155,6 +156,7 @@ public class SudytechWxClient extends DirectClient<SudytechWxCredentials> {
 			return Optional.empty();
 		}
 	}
+	
 
 	private boolean isWeChatLoginUrl() {
 		return this.loginUrl.contains("?appId=");

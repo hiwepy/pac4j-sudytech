@@ -26,4 +26,27 @@ import org.pac4j.core.profile.CommonProfile;
  */
 public class SudytechWxProfile extends CommonProfile {
      
+	private final String uname;
+	/**
+	 * 第三方平台OpenID（通常指第三方账号体系下某应用中用户的唯一ID）
+	 */
+	private final String openid;
+
+    public SudytechWxProfile(String uname, String openid) {
+        this.uname = uname;
+        this.openid = openid;
+    }
+
+    @Override
+    public String getId() {
+    	return this.getUname();
+    }
+    
+	public String getUname() {
+		return uname;
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
 }
