@@ -35,6 +35,7 @@ public class SudytechWxProfile extends CommonProfile {
     public SudytechWxProfile(String uname, String openid) {
         this.uname = uname;
         this.openid = openid;
+        this.setId(uname);
     }
 
     @Override
